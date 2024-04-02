@@ -34,47 +34,89 @@
 			}
 		}
 	}
-
-	const test = () => {
-		if (!updatedata) {
-			if (
-				name === '' ||
-				age === 0 ||
-				gender === '' ||
-				country === '' ||
-				state === '' ||
-				city === ''
-			) {
-				alert('One or more required fields are null');
-				return;
-			}
-			if (checked == false) {
-				alert('Agree to terms ans condition');
-				return;
-			}
-			let obj = {
-				id: id,
-				name: name,
-				age: age,
-				gender: gender,
-				country: country,
-				state: state,
-				city: city
-			};
-			id++;
-			name = '';
-			age = 0;
-			gender = '';
-			country = '';
-			state = '';
-			city = '';
-			statelist = null;
-			checked = false;
-			Data.update((curr) => {
-				return [...curr, obj];
+  const deletedata = (id: number | undefined) => {
+		if (id == undefined) {
+			return;
+		} else {
+			Data.update((currData) => {
+				return currData.filter((item) => item.id !== id);
 			});
 		}
 	};
+  const updateValueById = (id:number, newValue:student) =>{
+    Data.update(curr => {
+        return curr.map(item => {
+            if (item.id === id) { 
+                return { ...item, value: newValue };
+            }
+            return item;
+        });
+    });
+}
+const test = () => {
+    if (name === '' ||
+        age === 0 ||
+        gender === '' ||
+        country === '' ||
+        state === '' ||
+        city === ''
+    ) {
+        alert('One or more required fields are null');
+        return;
+    }
+    if (!checked) {
+        alert('Agree to terms and conditions');
+        return;
+    }
+    if (!updatedata) {
+        let obj = {
+            id: id,
+            name: name,
+            age: age,
+            gender: gender,
+            country: country,
+            state: state,
+            city: city
+        };
+        id++;
+        name = '';
+        age = 0;
+        gender = '';
+        country = '';
+        state = '';
+        city = '';
+        statelist = null;
+        checked = false;
+        updatedata = false;
+        Data.update((curr) => {
+            return [...curr, obj];
+        });
+    } else {
+        let obj = {
+            id: updatedataid,
+            name: name,
+            age: age,
+            gender: gender,
+            country: country,
+            state: state,
+            city: city
+        };
+        name = '';
+        age = 0;
+        gender = '';
+        country = '';
+        state = '';
+        city = '';
+        statelist = null;
+        checked = false;
+        updatedata = false;
+        deletedata(updatedataid ); 
+        Data.update((curr) => {
+            return [...curr, obj];
+        });
+    }
+};
+ 
 </script>
 
 <main>

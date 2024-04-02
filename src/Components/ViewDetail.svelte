@@ -7,6 +7,7 @@
 
 	const unsubscribe = Data.subscribe((value) => {
 		DataValue = value;
+        console.log(value)
 	});
 	const deletedata = (id: number | undefined) => {
 		if (id == undefined) {
