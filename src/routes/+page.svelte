@@ -6,10 +6,10 @@
 <main>
      
     <div class="flex-row sm:flex   ">
-        <div  class=" border-2 rounded m-2 sm:w-4/12"> 
+        <div  class=" border-2 rounded m-2 lg:w-4/12"> 
             <AddDetail/>
         </div>
-        <div   class=" grow border-2 m-2"  > 
+        <div   class=" grow   m-2"  > 
             <ViewDetail/>
         </div>
     </div>
