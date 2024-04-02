@@ -11,7 +11,7 @@
 	let state = '';
 	let city = '';
 	let checked: boolean = false;
-	let statelist: string[];
+	let statelist: string[] | null;
 	const handlecountryChange = (): void => {
 		statelist = states.get(country)!;
 	};
@@ -48,6 +48,7 @@
 		country = '';
 		state = '';
 		city = '';
+    statelist=null
     checked=false;
 		Data.update((curr) => {
 			return [...curr, obj];
