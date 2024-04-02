@@ -1,18 +1,20 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import {Data} from  '../Stores/DataStore'
-  import type { demoobj } from '../app';
+    import {Data,countries,states} from  '../Stores/DataStore'
+    import type { student } from '../app';
+   
   let id:number=1;
     let name = '';
     let gender = '';
     let age :number= 0;
-    let country = '';
+    let country:string = '';
     let state = '';
     let city = '';
-    let DataValue :demoobj = {}
-
-    
-
+    let DataValue :student = {}
+      
+    let statelist:string[] 
+    const handlecountryChange =()=>{statelist=states.get(country)! }
+     
     let test = ()=>{
         let obj ={
             id:id,
@@ -29,6 +31,7 @@
 });
 console.log(obj)
     }
+
      
   </script>
   
@@ -70,11 +73,11 @@ console.log(obj)
           <label class="flex items-center gap-2 text-xl text-right" for="country">Country</label>
         </div>
         <div class="w-1/2">
-          <select id="country" class="select select-bordered text-md w-full" bind:value={country}>
-            <option></option>
-            <option>India</option>
-            <option>America</option>
-            <option>England</option>
+          <select id="country" class="select select-bordered text-md w-full" bind:value={country} on:change={handlecountryChange}>
+             
+            {#each countries as cntry}
+            <option>{cntry}</option>
+            {/each}
           </select>
         </div>
       </div>
@@ -84,8 +87,14 @@ console.log(obj)
         </div>
         <div class="w-1/2">
           <select id="state" class="select select-bordered text-md w-full" bind:value={state}>
-            <option></option>
-            <option>America</option>
+            {#if statelist != null}
+            {#each statelist as st}
+                <option>{st}</option>
+            {/each}
+            {:else}
+              <option>--Select Country--</option>
+        {/if}
+            
           </select>
         </div>
       </div>

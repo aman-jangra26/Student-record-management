@@ -1,10 +1,10 @@
 <script lang="ts">
     import {Data} from '../Stores/DataStore'
-    import type { demoobj } from '../app';
-    let DataValue :demoobj[]  ;
+    import type { student } from '../app';
+    let DataValue :student[]  ;
 
     const unsubscribe = Data.subscribe((value) => {
-    DataValue = value; // Assign the current value of Data to DataValue
+    DataValue = value;  
     console.log(DataValue)
 });
 </script>
