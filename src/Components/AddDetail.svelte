@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import { Data, countries, states } from '../Stores/DataStore';
 	import type { student } from '../app';
-
+	export let updatedata: boolean = false;
+	export let updatedataid: number;
 	let id: number = 2;
 	let name = '';
 	let gender = '';
@@ -15,49 +16,69 @@
 	const handlecountryChange = (): void => {
 		statelist = states.get(country)!;
 	};
+	let DataValue: student[];
+	$: {
+		if (updatedata) {
+			let obj: student | undefined;
+			const unsubscribe = Data.subscribe((data) => {
+				obj = data.find((item) => item.id === updatedataid);
+			});
+			if (obj) {
+				name = obj.name !== undefined ? obj.name : ' ';
+				age = obj.age !== undefined ? obj.age : 0;
+				gender = obj.gender !== undefined ? obj.gender : ' ';
+				country = obj.country !== undefined ? obj.country : ' ';
+				statelist = states.get(country)!;
+				state = obj.state !== undefined ? obj.state : ' ';
+				city = obj.city !== undefined ? obj.city : ' ';
+			}
+		}
+	}
 
 	const test = () => {
-		if (
-			name === '' ||
-			age === 0 ||
-			gender === '' ||
-			country === '' ||
-			state === '' ||
-			city === ''
-		) {
-			alert('One or more required fields are null');
-			return;
+		if (!updatedata) {
+			if (
+				name === '' ||
+				age === 0 ||
+				gender === '' ||
+				country === '' ||
+				state === '' ||
+				city === ''
+			) {
+				alert('One or more required fields are null');
+				return;
+			}
+			if (checked == false) {
+				alert('Agree to terms ans condition');
+				return;
+			}
+			let obj = {
+				id: id,
+				name: name,
+				age: age,
+				gender: gender,
+				country: country,
+				state: state,
+				city: city
+			};
+			id++;
+			name = '';
+			age = 0;
+			gender = '';
+			country = '';
+			state = '';
+			city = '';
+			statelist = null;
+			checked = false;
+			Data.update((curr) => {
+				return [...curr, obj];
+			});
 		}
-		if (checked == false) {
-			alert('Agree to terms ans condition');
-			return;
-		}
-		let obj = {
-			id: id,
-			name: name,
-			age: age,
-			gender: gender,
-			country: country,
-			state: state,
-			city: city
-		};
-		id++;
-		name = '';
-		age = 0;
-		gender = '';
-		country = '';
-		state = '';
-		city = '';
-    statelist=null
-    checked=false;
-		Data.update((curr) => {
-			return [...curr, obj];
-		});
 	};
 </script>
 
 <main>
-  <h1 class="text-2xl font-bold text-center">Student Registration Form   </h1>
+	<h1 class="text-2xl font-bold text-center px-2">Student Registration Form</h1>
 	<form class="w-full p-10 flex-row bg-pink-200">
 		<div class="flex items-center justify-center m-auto mt-2">
 			<div class="w-20">
