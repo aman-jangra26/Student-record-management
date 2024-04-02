@@ -1,3 +1,18 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-<button class="btn btn-primary">Hello daisyUI</button>
+
+<script>
+    import AddDetail from "../Components/AddDetail.svelte";
+    import ViewDetail from "../Components/ViewDetail.svelte";
+</script>
+<main>
+     
+    <div class="flex-row sm:flex   ">
+        <div  class=" border-2 rounded m-2 sm:w-4/12"> 
+            <AddDetail/>
+        </div>
+        <div   class=" grow border-2 m-2"  > 
+            <ViewDetail/>
+        </div>
+    </div>
+   
+    
+</main>

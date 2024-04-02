@@ -9,5 +9,13 @@ declare global {
 		// interface Platform {}
 	}
 }
-
+export interface demoobj {
+    id?: number;
+    name?: string;
+    gender?: string;
+    age?: number;
+    country?: string;
+    state?: string;
+    city?: string;
+}
 export {};
