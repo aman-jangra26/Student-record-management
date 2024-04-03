@@ -9,7 +9,7 @@ declare global {
 		// interface Platform {}
 	}
 }
-export interface student {
+export interface studentType {
     id?: number;
     name?: string;
     gender?: string;

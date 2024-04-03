@@ -3,11 +3,11 @@
 	import { updated } from "$app/stores";
     import AddDetail from "../Components/AddDetail.svelte";
     import ViewDetail from "../Components/ViewDetail.svelte";
-     let updateid:number =-1;
-     let update:boolean=false
-    const Editfunc = (e:any)=>{
-        updateid =e.detail
-        update=true
+     let updatedDataId:number =-1;
+     let isUpdatingData:boolean=false
+    const updateData = (e:any)=>{
+        updatedDataId =e.detail
+        isUpdatingData=true
     }
     
 </script>
@@ -15,10 +15,10 @@
      
     <div class="flex-row sm:flex   ">
         <div  class=" border-2 rounded m-2 lg:w-4/12"> 
-            <AddDetail  bind:updatedata={update} bind:updatedataid={updateid}/>
+            <AddDetail  bind:isUpdatingData={isUpdatingData} bind:updatedDataId={updatedDataId}/>
         </div>
         <div   class=" grow   m-2"  > 
-            <ViewDetail on:Editfunc={Editfunc}/>
+            <ViewDetail on:updateData={updateData}/>
         </div>
     </div>
    

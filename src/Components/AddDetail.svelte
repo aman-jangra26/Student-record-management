@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Data, countries, states } from '../Stores/DataStore';
-	import type { student } from '../app';
-	export let updatedata: boolean = false;
-	export let updatedataid: number;
+	import { studentData, countries, states } from '../Stores/DataStore';
+	import type { studentType } from '../app';
+	export let isUpdatingData: boolean = false;
+	export let updatedDataId: number;
 	let id: number = 2;
 	let name = '';
 	let gender = '';
@@ -12,16 +12,14 @@
 	let state = '';
 	let city = '';
 	let checked: boolean = false;
-	let statelist: string[] | null;
-	const handlecountryChange = (): void => {
-		statelist = states.get(country)!;
-	};
-	let DataValue: student[];
+	let statelist: string[] | null; 
+	let isvalueUpdated=true;
 	$: {
-		if (updatedata) {
-			let obj: student | undefined;
-			const unsubscribe = Data.subscribe((data) => {
-				obj = data.find((item) => item.id === updatedataid);
+		statelist = states.get(country)!;
+		if (isUpdatingData && isvalueUpdated) {
+			let obj: studentType |undefined;
+			const unsubscribe = studentData.subscribe((data) => {
+				return data.find((item) => item.id === updatedDataId)!;
 			});
 			if (obj) {
 				name = obj.name !== undefined ? obj.name : ' ';
@@ -32,28 +30,19 @@
 				state = obj.state !== undefined ? obj.state : ' ';
 				city = obj.city !== undefined ? obj.city : ' ';
 			}
+			isvalueUpdated=false
 		}
 	}
-  const deletedata = (id: number | undefined) => {
+  const deleteData = (id: number | undefined) => {
 		if (id == undefined) {
 			return;
 		} else {
-			Data.update((currData) => {
+			studentData.update((currData) => {
 				return currData.filter((item) => item.id !== id);
 			});
 		}
-	};
-  const updateValueById = (id:number, newValue:student) =>{
-    Data.update(curr => {
-        return curr.map(item => {
-            if (item.id === id) { 
-                return { ...item, value: newValue };
-            }
-            return item;
-        });
-    });
-}
-const test = () => {
+	}; 
+const saveData = () => {
     if (name === '' ||
         age === 0 ||
         gender === '' ||
@@ -68,7 +57,7 @@ const test = () => {
         alert('Agree to terms and conditions');
         return;
     }
-    if (!updatedata) {
+    if (!isUpdatingData) {
         let obj = {
             id: id,
             name: name,
@@ -87,13 +76,13 @@ const test = () => {
         city = '';
         statelist = null;
         checked = false;
-        updatedata = false;
-        Data.update((curr) => {
+        isUpdatingData = false;
+        studentData.update((curr) => {
             return [...curr, obj];
         });
     } else {
         let obj = {
-            id: updatedataid,
+            id: updatedDataId,
             name: name,
             age: age,
             gender: gender,
@@ -109,9 +98,10 @@ const test = () => {
         city = '';
         statelist = null;
         checked = false;
-        updatedata = false;
-        deletedata(updatedataid ); 
-        Data.update((curr) => {
+        isUpdatingData = false;
+		isvalueUpdated =true;
+        deleteData(updatedDataId ); 
+        studentData.update((curr) => {
             return [...curr, obj];
         });
     }
@@ -132,24 +122,26 @@ const test = () => {
 					placeholder="Type here"
 					class="input input-bordered w-full"
 					bind:value={name}
+					id="name"
 				/>
 			</div>
 		</div>
 		<div class="flex justify-center mt-2">
 			<div class="w-20">
-				<label class="flex items-center gap-2 text-xl text-right" for="gender">Gender</label>
+				<p class="flex items-center gap-2 text-xl text-right"  >Gender</p>
 			</div>
 			<div class="flex w-1/2">
-				<div class="flex ml-2">
-					<input type="radio" name="gender" class="radio" value="male" bind:group={gender} />
+				<div class="flex flex-row-reverse ml-2 gap-2">
 					<label class="flex items-center gap-2 text-right" for="male">Male</label>
+					<input type="radio" name="gender" class="radio" value="male" bind:group={gender} id="male" />
 				</div>
-				<div class="flex ml-2 lg:ml-4">
-					<input type="radio" name="gender" class="radio" value="female" bind:group={gender} />
+				<div class="flex flex-row-reverse ml-2 lg:ml-4 gap-2">
 					<label class="flex items-center gap-2 text-right" for="female">Female</label>
-				</div>
+					<input type="radio" name="gender" class="radio" value="female" bind:group={gender} id="female" />
+				</div> 
 			</div>
 		</div>
+		
 		<div class="flex items-center justify-center m-auto mt-2">
 			<div class="w-20">
 				<label class="flex items-center gap-2 text-xl text-right" for="age">Age</label>
@@ -159,6 +151,7 @@ const test = () => {
 					type="text"
 					placeholder="Type here"
 					class="input input-bordered w-full"
+					id="age"
 					bind:value={age}
 				/>
 			</div>
@@ -172,7 +165,7 @@ const test = () => {
 					id="country"
 					class="select select-bordered text-md w-full"
 					bind:value={country}
-					on:change={handlecountryChange}
+					 
 				>
 					{#each countries as cntry}
 						<option>{cntry}</option>
@@ -206,6 +199,7 @@ const test = () => {
 					placeholder="Type here"
 					class="input input-bordered w-full"
 					bind:value={city}
+					id="city"
 				/>
 			</div>
 		</div>
@@ -218,7 +212,7 @@ const test = () => {
 			</div>
 		</div>
 		<div class="flex items-center justify-center m-auto my-2">
-			<button on:click={test} class="btn btn-wide">Submit</button>
+			<button on:click={saveData} class="btn btn-wide">Submit</button>
 		</div>
 	</form>
 </main>
