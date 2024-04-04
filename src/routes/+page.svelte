@@ -3,22 +3,41 @@
 	import { updated } from "$app/stores";
     import AddDetail from "../Components/AddDetail.svelte";
     import ViewDetail from "../Components/ViewDetail.svelte";
-     let updatedDataId:number =-1;
-     let isUpdatingData:boolean=false
-    const updateData = (e:any)=>{
-        updatedDataId =e.detail
+    import type { studentType } from '../app';
+    let studentData :studentType[]=[]
+    let updateDataValue:studentType ={};
+    let isUpdatingData:boolean=false
+    const updateData = (e:any)=>{ 
+        updateDataValue = e.detail
         isUpdatingData=true
+         
     }
-    
+    const addData =(e:any)=>{
+        let newdata = e.detail; 
+        console.log(e.detail)
+        console.log(studentData)
+       const index = studentData.findIndex(item => item.id === newdata.id); 
+    if (index !== -1) { 
+        studentData[index] = newdata; 
+    } else { 
+        studentData = [...studentData,newdata]; 
+    } 
+    }
+    const deleteData =(e:any)=>{
+        let deleteDatavalue = e.detail;
+        studentData = studentData.filter(item => item !== deleteDatavalue); 
+    }
 </script>
 <main>
      
     <div class="flex-row sm:flex   ">
         <div  class=" border-2 rounded m-2 lg:w-4/12"> 
-            <AddDetail  bind:isUpdatingData={isUpdatingData} bind:updatedDataId={updatedDataId}/>
+            
+            <AddDetail on:addData={addData} bind:isUpdatingData={isUpdatingData} bind:updateDataValue={updateDataValue} />
         </div>
         <div   class=" grow   m-2"  > 
-            <ViewDetail on:updateData={updateData}/>
+           
+            <ViewDetail DataValue={studentData} on:deleteData={deleteData} on:updateData={updateData}/>
         </div>
     </div>
    

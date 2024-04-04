@@ -1,23 +1,16 @@
-<script lang="ts">
-	import { studentData } from '../Stores/DataStore';
+<script lang="ts"> 
 	import type { studentType } from '../app';
     import { createEventDispatcher } from 'svelte';
-  let dispatch = createEventDispatcher();
-	let DataValue: studentType[];
-
-	const unsubscribe = studentData.subscribe((value) => {
-		DataValue = value;
-         
-	});
-	const deleteData = (id: number | undefined) => {
-		if (id == undefined) {
-			return;
-		} else {
-			studentData.update((currData) => {
-				return currData.filter((item) => item.id !== id);
-			});
-		}
+    let dispatch = createEventDispatcher();
+	 
+	export let DataValue :studentType[];
+	 
+	const deleteData = (dataValue:studentType) => { 
+		dispatch('deleteData',dataValue)
 	};
+	const updateData =( DataValue:studentType)=>{
+		dispatch('updateData',DataValue)
+	}
 	 
 </script>
 
@@ -59,13 +52,13 @@
 						{dv.city}
 					</div>
 					<div class="w-1/8 lg:w-32">
-						<button on:click={() => dispatch('updateData', dv.id)} class="   btn btn-success">Edit</button
+						<button on:click={() => updateData(dv)} class="   btn btn-success">Edit</button
 						>
 					</div>
 					<div class="w-1/8 lg:w-32">
 						<button
 							on:click={() => {
-								deleteData(dv.id);
+								deleteData(dv);
 							}}
 							class="btn btn-error">Delete</button
 						>

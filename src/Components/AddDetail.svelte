@@ -1,10 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { studentData, countries, states } from '../Stores/DataStore';
+	import { createEventDispatcher } from 'svelte';
+	let dispatch = createEventDispatcher();
 	import type { studentType } from '../app';
+	const countries: string[] = ['USA', 'India', 'United Kingdom', 'China', 'Australia'];
+	const states = new Map<string, string[]>([
+		['USA', ['California', 'Texas', 'New York', 'Florida']],
+		['India', ['Delhi', ' Maharashtra', 'Haryana', 'Punjab']],
+		['United Kingdom', ['England', 'England', 'England', 'Scotland']],
+		['China', ['Beijing', 'Shanghai', 'Sichuan', 'Guangdong']],
+		['Australia', ['New South Wales', 'Victoria', 'Queensland', 'Western Australia']]
+	]);
 	export let isUpdatingData: boolean = false;
-	export let updatedDataId: number;
-	let id: number = 2;
+	export let updateDataValue: studentType;
+	let id: number = 1;
 	let name = '';
 	let gender = '';
 	let age: number = 0;
@@ -12,16 +20,15 @@
 	let state = '';
 	let city = '';
 	let checked: boolean = false;
-	let statelist: string[] | null; 
-	let isvalueUpdated=true;
+	let statelist: string[] | null;
+	let isvalueUpdated = true;
+
 	$: {
 		statelist = states.get(country)!;
 		if (isUpdatingData && isvalueUpdated) {
-			let obj: studentType |undefined;
-			const unsubscribe = studentData.subscribe((data) => {
-				return data.find((item) => item.id === updatedDataId)!;
-			});
+			let obj = updateDataValue;
 			if (obj) {
+				id = obj.id !== undefined ? obj.id : 0;
 				name = obj.name !== undefined ? obj.name : ' ';
 				age = obj.age !== undefined ? obj.age : 0;
 				gender = obj.gender !== undefined ? obj.gender : ' ';
@@ -30,83 +37,49 @@
 				state = obj.state !== undefined ? obj.state : ' ';
 				city = obj.city !== undefined ? obj.city : ' ';
 			}
-			isvalueUpdated=false
+			isvalueUpdated = false;
 		}
 	}
-  const deleteData = (id: number | undefined) => {
-		if (id == undefined) {
+	const saveData = () => {
+		if (
+			name === '' ||
+			age === 0 ||
+			gender === '' ||
+			country === '' ||
+			state === '' ||
+			city === ''
+		) {
+			alert('One or more required fields are null');
 			return;
-		} else {
-			studentData.update((currData) => {
-				return currData.filter((item) => item.id !== id);
-			});
 		}
-	}; 
-const saveData = () => {
-    if (name === '' ||
-        age === 0 ||
-        gender === '' ||
-        country === '' ||
-        state === '' ||
-        city === ''
-    ) {
-        alert('One or more required fields are null');
-        return;
-    }
-    if (!checked) {
-        alert('Agree to terms and conditions');
-        return;
-    }
-    if (!isUpdatingData) {
-        let obj = {
-            id: id,
-            name: name,
-            age: age,
-            gender: gender,
-            country: country,
-            state: state,
-            city: city
-        };
-        id++;
-        name = '';
-        age = 0;
-        gender = '';
-        country = '';
-        state = '';
-        city = '';
-        statelist = null;
-        checked = false;
-        isUpdatingData = false;
-        studentData.update((curr) => {
-            return [...curr, obj];
-        });
-    } else {
-        let obj = {
-            id: updatedDataId,
-            name: name,
-            age: age,
-            gender: gender,
-            country: country,
-            state: state,
-            city: city
-        };
-        name = '';
-        age = 0;
-        gender = '';
-        country = '';
-        state = '';
-        city = '';
-        statelist = null;
-        checked = false;
-        isUpdatingData = false;
-		isvalueUpdated =true;
-        deleteData(updatedDataId ); 
-        studentData.update((curr) => {
-            return [...curr, obj];
-        });
-    }
-};
- 
+		if (!checked) {
+			alert('Agree to terms and conditions');
+			return;
+		}
+		let obj = {
+			id: id,
+			name: name,
+			age: age,
+			gender: gender,
+			country: country,
+			state: state,
+			city: city
+		};
+		dispatch('addData', obj);
+		if (!isUpdatingData) {
+			id++;
+		}
+		name = '';
+		age = 0;
+		gender = '';
+		country = '';
+		state = '';
+		city = '';
+		statelist = null;
+		checked = false;
+		isUpdatingData = false;
+		isvalueUpdated = true; 
+	};
 </script>
 
 <main>
@@ -128,20 +101,34 @@ const saveData = () => {
 		</div>
 		<div class="flex justify-center mt-2">
 			<div class="w-20">
-				<p class="flex items-center gap-2 text-xl text-right"  >Gender</p>
+				<p class="flex items-center gap-2 text-xl text-right">Gender</p>
 			</div>
 			<div class="flex w-1/2">
 				<div class="flex flex-row-reverse ml-2 gap-2">
 					<label class="flex items-center gap-2 text-right" for="male">Male</label>
-					<input type="radio" name="gender" class="radio" value="male" bind:group={gender} id="male" />
+					<input
+						type="radio"
+						name="gender"
+						class="radio"
+						value="male"
+						bind:group={gender}
+						id="male"
+					/>
 				</div>
 				<div class="flex flex-row-reverse ml-2 lg:ml-4 gap-2">
 					<label class="flex items-center gap-2 text-right" for="female">Female</label>
-					<input type="radio" name="gender" class="radio" value="female" bind:group={gender} id="female" />
-				</div> 
+					<input
+						type="radio"
+						name="gender"
+						class="radio"
+						value="female"
+						bind:group={gender}
+						id="female"
+					/>
+				</div>
 			</div>
 		</div>
-		
+
 		<div class="flex items-center justify-center m-auto mt-2">
 			<div class="w-20">
 				<label class="flex items-center gap-2 text-xl text-right" for="age">Age</label>
@@ -161,12 +148,7 @@ const saveData = () => {
 				<label class="flex items-center gap-2 text-xl text-right" for="country">Country</label>
 			</div>
 			<div class="w-1/2">
-				<select
-					id="country"
-					class="select select-bordered text-md w-full"
-					bind:value={country}
-					 
-				>
+				<select id="country" class="select select-bordered text-md w-full" bind:value={country}>
 					{#each countries as cntry}
 						<option>{cntry}</option>
 					{/each}
