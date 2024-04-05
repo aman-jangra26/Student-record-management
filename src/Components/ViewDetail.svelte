@@ -1,17 +1,15 @@
-<script lang="ts"> 
+<script lang="ts">
 	import type { studentType } from '../app';
-    import { createEventDispatcher } from 'svelte';
-    let dispatch = createEventDispatcher();
-	 
-	export let DataValue :studentType[];
-	 
-	const deleteData = (dataValue:studentType) => { 
-		dispatch('deleteData',dataValue)
+	import { createEventDispatcher } from 'svelte';
+	let dispatch = createEventDispatcher();
+
+	export let DataValue: studentType[];
+	const deleteData = (dataValue: studentType) => {
+		dispatch('deleteData', dataValue);
 	};
-	const updateData =( DataValue:studentType)=>{
-		dispatch('updateData',DataValue)
-	}
-	 
+	const updateData = (DataValue: studentType) => {
+		dispatch('updateData', DataValue);
+	};
 </script>
 
 <main>
@@ -52,8 +50,7 @@
 						{dv.city}
 					</div>
 					<div class="w-1/8 lg:w-32">
-						<button on:click={() => updateData(dv)} class="   btn btn-success">Edit</button
-						>
+						<button on:click={() => updateData(dv)} class="   btn btn-success">Edit</button>
 					</div>
 					<div class="w-1/8 lg:w-32">
 						<button

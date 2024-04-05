@@ -10,16 +10,16 @@
 		['China', ['Beijing', 'Shanghai', 'Sichuan', 'Guangdong']],
 		['Australia', ['New South Wales', 'Victoria', 'Queensland', 'Western Australia']]
 	]);
-	export let isUpdatingData: boolean = false;
+	export let isUpdatingData = false;
 	export let updateDataValue: studentType;
-	let id: number = 1;
+	let id = 1;
 	let name = '';
 	let gender = '';
-	let age: number = 0;
-	let country: string = '';
+	let age = 0;
+	let country = '';
 	let state = '';
 	let city = '';
-	let checked: boolean = false;
+	let checked = false;
 	let statelist: string[] | null;
 	let isvalueUpdated = true;
 
@@ -55,30 +55,31 @@
 		if (!checked) {
 			alert('Agree to terms and conditions');
 			return;
+		} else {
+			let obj = {
+				id: id,
+				name: name,
+				age: age,
+				gender: gender,
+				country: country,
+				state: state,
+				city: city
+			};
+			dispatch('addData', obj);
+			if (!isUpdatingData) {
+				id++;
+			}
+			name = '';
+			age = 0;
+			gender = '';
+			country = '';
+			state = '';
+			city = '';
+			statelist = null;
+			checked = false;
+			isUpdatingData = false;
+			isvalueUpdated = true;
 		}
-		let obj = {
-			id: id,
-			name: name,
-			age: age,
-			gender: gender,
-			country: country,
-			state: state,
-			city: city
-		};
-		dispatch('addData', obj);
-		if (!isUpdatingData) {
-			id++;
-		}
-		name = '';
-		age = 0;
-		gender = '';
-		country = '';
-		state = '';
-		city = '';
-		statelist = null;
-		checked = false;
-		isUpdatingData = false;
-		isvalueUpdated = true; 
 	};
 </script>
 
