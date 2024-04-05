@@ -12,8 +12,6 @@
 	};
 	const addData = (e: any) => {
 		let newdata = e.detail;
-		console.log(e.detail);
-		console.log(studentData);
 		const index = studentData.findIndex((item) => item.id === newdata.id);
 		if (index !== -1) {
 			studentData[index] = newdata;
