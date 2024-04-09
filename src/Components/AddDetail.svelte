@@ -6,48 +6,25 @@
 	const states = new Map<string, string[]>([
 		['USA', ['California', 'Texas', 'New York', 'Florida']],
 		['India', ['Delhi', ' Maharashtra', 'Haryana', 'Punjab']],
-		['United Kingdom', ['England', 'England', 'England', 'Scotland']],
+		['United Kingdom', ['England', 'Ireland', 'Wales', 'Scotland']],
 		['China', ['Beijing', 'Shanghai', 'Sichuan', 'Guangdong']],
 		['Australia', ['New South Wales', 'Victoria', 'Queensland', 'Western Australia']]
 	]);
-	export let isUpdatingData = false;
-	export let updateDataValue: studentType;
-	let id = 1;
-	let name = '';
-	let gender = '';
-	let age = 0;
-	let country = '';
-	let state = '';
-	let city = '';
+	export let user:studentType ={};
+	export let isUpdatingData = false; 
 	let checked = false;
-	let statelist: string[] | null;
-	let isvalueUpdated = true;
-
-	$: {
-		statelist = states.get(country)!;
-		if (isUpdatingData && isvalueUpdated) {
-			let obj = updateDataValue;
-			if (obj) {
-				id = obj.id !== undefined ? obj.id : 0;
-				name = obj.name !== undefined ? obj.name : ' ';
-				age = obj.age !== undefined ? obj.age : 0;
-				gender = obj.gender !== undefined ? obj.gender : ' ';
-				country = obj.country !== undefined ? obj.country : ' ';
-				statelist = states.get(country)!;
-				state = obj.state !== undefined ? obj.state : ' ';
-				city = obj.city !== undefined ? obj.city : ' ';
-			}
-			isvalueUpdated = false;
-		}
-	}
-	const saveData = () => {
+	let statelist: string[] | null|undefined ;  
+	$: {   
+		statelist =states.get(user.country !== undefined ? user.country : ' ');  
+	} 
+	const saveData = () => { 
 		if (
-			name === '' ||
-			age === 0 ||
-			gender === '' ||
-			country === '' ||
-			state === '' ||
-			city === ''
+			user.name === undefined ||  
+			user.age === (0 ||undefined) ||
+			user.gender === undefined ||
+			user.country ===undefined ||
+			user.state ===  undefined ||
+			user.city === undefined
 		) {
 			alert('One or more required fields are null');
 			return;
@@ -55,32 +32,15 @@
 		if (!checked) {
 			alert('Agree to terms and conditions');
 			return;
-		} else {
-			let obj = {
-				id: id,
-				name: name,
-				age: age,
-				gender: gender,
-				country: country,
-				state: state,
-				city: city
-			};
-			dispatch('addData', obj);
-			if (!isUpdatingData) {
-				id++;
-			}
-			name = '';
-			age = 0;
-			gender = '';
-			country = '';
-			state = '';
-			city = '';
-			statelist = null;
-			checked = false;
-			isUpdatingData = false;
-			isvalueUpdated = true;
+		} else { 
+			if (!isUpdatingData && user.id== undefined ) { 
+				user.id=Date.now();
+			} 
 		}
+		dispatch('addData');
+		isUpdatingData = false; 
 	};
+
 </script>
 
 <main>
@@ -95,7 +55,7 @@
 					type="text"
 					placeholder="Type here"
 					class="input input-bordered w-full"
-					bind:value={name}
+					bind:value={user.name}
 					id="name"
 				/>
 			</div>
@@ -112,7 +72,7 @@
 						name="gender"
 						class="radio"
 						value="male"
-						bind:group={gender}
+						bind:group={user.gender}
 						id="male"
 					/>
 				</div>
@@ -123,7 +83,7 @@
 						name="gender"
 						class="radio"
 						value="female"
-						bind:group={gender}
+						bind:group={user.gender}
 						id="female"
 					/>
 				</div>
@@ -140,7 +100,7 @@
 					placeholder="Type here"
 					class="input input-bordered w-full"
 					id="age"
-					bind:value={age}
+					bind:value={user.age}
 				/>
 			</div>
 		</div>
@@ -149,7 +109,11 @@
 				<label class="flex items-center gap-2 text-xl text-right" for="country">Country</label>
 			</div>
 			<div class="w-1/2">
-				<select id="country" class="select select-bordered text-md w-full" bind:value={country}>
+				<select
+					id="country"
+					class="select select-bordered text-md w-full"
+					bind:value={user.country}
+				>
 					{#each countries as cntry}
 						<option>{cntry}</option>
 					{/each}
@@ -161,7 +125,7 @@
 				<label class="flex items-center gap-2 text-xl text-right" for="state">State</label>
 			</div>
 			<div class="w-1/2">
-				<select id="state" class="select select-bordered text-md w-full" bind:value={state}>
+				<select id="state" class="select select-bordered text-md w-full" bind:value={user.state}>
 					{#if statelist != null}
 						{#each statelist as st}
 							<option>{st}</option>
@@ -181,7 +145,7 @@
 					type="text"
 					placeholder="Type here"
 					class="input input-bordered w-full"
-					bind:value={city}
+					bind:value={user.city}
 					id="city"
 				/>
 			</div>
